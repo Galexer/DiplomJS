@@ -1,4 +1,5 @@
 localStorage.clear()
+let send = `event=update`
 let date = new Date()
 let midnight = Math.round(date.setHours(0, 0, 0, 0) / 1000)
 
@@ -8,6 +9,7 @@ let nawLink = document.getElementsByClassName("page-nav__day")
 let numDayWeek = date.getDay()
 let today = date.getDate()
 let id = 0;
+let dayStor = today;
 for(let i = 0; i < 8; i++){
     let dayWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"]
     
@@ -48,7 +50,8 @@ for(let i = 0; i < 8; i++){
             n.classList.remove("page-nav__day_chosen")
         }
         day.classList.add("page-nav__day_chosen")
-        localStorage.setItem("day", day.children[1].textContent)
+        dayStor = day.children[1].textContent
+        console.log(dayStor)
     })
     id ++
 }
@@ -56,16 +59,7 @@ for(let i = 0; i < 8; i++){
 //отрисовка фильмов
 let main = document.getElementById("main")
 let seansNum = 0
-let xhr = new XMLHttpRequest()
-xhr.open('POST', 'https://jscp-diplom.netoserver.ru/')
-xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
-xhr.responseType = 'json'
-xhr.send(`event=update`)
-xhr.onreadystatechange = function () {
-    if(xhr.readyState === xhr.DONE) {
-
-        let a = xhr.response
-        
+request(send).then( a => {
         let films = a.films.result
         for(f of films){
             postermaker(f)
@@ -90,7 +84,7 @@ xhr.onreadystatechange = function () {
                             hall = document.getElementById(`${h.hall_name}`)
                             first = 0
                         }
-                        hall.insertAdjacentHTML('afterbegin', `<li class="movie-seances__time-block"><a id="film_${h.hall_id}_${s.seance_id}_${f.film_id}" class="movie-seances__time" href="hall.html">${s.seance_time}</a></li>`)                     
+                        hall.insertAdjacentHTML(`beforeend`, `<li class="movie-seances__time-block"><a id="film_${h.hall_id}_${s.seance_id}_${f.film_id}" class="movie-seances__time" href="hall.html">${s.seance_time}</a></li>`)                     
                     }   
                 }
                 first = 1
@@ -104,7 +98,7 @@ xhr.onreadystatechange = function () {
             link[i].addEventListener("click", ()=> {  
                 
                 let info = link[i].id.split("_")
-                
+                localStorage.setItem("day", dayStor)
                 a.halls.result.forEach(e => {
                     if(e.hall_id == info[1]){
                         localStorage.setItem("hall", JSON.stringify(e))
@@ -145,8 +139,8 @@ xhr.onreadystatechange = function () {
             }
         })
 
-    }
-}
+})    
+
 
 function postermaker(f) {
     main.insertAdjacentHTML(`afterbegin`, `<section id="movie_result_${f.film_id}"  class="movie">
