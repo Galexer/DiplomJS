@@ -7,10 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 let seats = localStorage.getItem("seats")
 seats = JSON.parse(seats)
-let hall = localStorage.getItem("hallId")
+let hallId = localStorage.getItem("hallId")
 let seans = localStorage.getItem("seansId")
 let time = localStorage.getItem("time")
-time = JSON.parse(time)
 let price = localStorage.getItem("price")
 price = JSON.parse(price)
 let conf = localStorage.getItem("conf")
@@ -18,7 +17,7 @@ let film = localStorage.getItem("filmName")
 let start = localStorage.getItem("start")
 let hallFullN = localStorage.getItem("hallName")
 let hallName = hallFullN.slice(hallFullN.indexOf("л")+1)
-let send = `event=sale_add&timestamp=${time}&hallId=${hall}&seanceId=${seans}&hallConfiguration=${conf}`
+let send = `event=sale_add&timestamp=${time}&hallId=${hallId}&seanceId=${seans}&hallConfiguration=${conf}`
 
 let filmN = document.getElementsByClassName("ticket__details ticket__title")
 filmN[0].textContent = film

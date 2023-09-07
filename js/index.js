@@ -28,14 +28,14 @@ for(let i = 0; i < nawLink.length; i++){
     if(i === 0) {
         day.classList.add("page-nav__day_today", "page-nav__day_chosen")
     }
+    let chooseDay1 = dayMs
 
     day.addEventListener("click", ()=> {
         for(n of nawLink){
             n.classList.remove("page-nav__day_chosen")
         }
         day.classList.add("page-nav__day_chosen")
-        //dayStor = day.children[1].textContent
-        chooseDay = dayMs
+        chooseDay = chooseDay1
     })
     dayMs += oneDayMs
 }
@@ -45,6 +45,7 @@ let main = document.getElementById("main")
 let seansNum = 0
 request(send).then( a => {
         let films = a.films.result
+        console.log(chooseDay)
         for(f of films){
             postermaker(f)
 
@@ -83,7 +84,6 @@ request(send).then( a => {
                 
                 let info = link[i].id.split("_")
 
-                //localStorage.setItem("day", dayStor)
                 a.halls.result.forEach(e => {
                     if(e.hall_id == info[1]){
                         localStorage.setItem("hall", JSON.stringify(e))
@@ -92,7 +92,7 @@ request(send).then( a => {
                 a.seances.result.forEach(e => {
                     if(e.seance_id == info[2]){
                         localStorage.setItem("seans", JSON.stringify(e))
-                        timeInS = chooseDay/1000 + (parseInt(e.seance_start) * 60)
+                        timeInS = Math.round(chooseDay/1000) + (parseInt(e.seance_start) * 60)
                         localStorage.setItem("timestamp", timeInS)
                     }
                 });
