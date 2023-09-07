@@ -4,15 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 })
 
-let hall = localStorage.getItem("hall")
-hall = JSON.parse(hall)
-let seanse = localStorage.getItem("seans")
-seanse = JSON.parse(seanse)
-let film = localStorage.getItem("film")
-film = JSON.parse(film)
-let day = localStorage.getItem("day")
-console.log(day)
-
 let allSeats = document.getElementsByClassName("conf-step__row")
 let price = localStorage.getItem("price") != undefined ? parseInt(localStorage.getItem("price")) : 0
 let seats = localStorage.getItem("seats") != undefined ? JSON.parse(localStorage.getItem("seats")) : {}
@@ -23,28 +14,26 @@ let butt = document.getElementsByClassName("acceptin-button")
 butt[0].style.backgroundColor = 'grey'
 butt[0].setAttribute('disabled', 'true')
 
+let fullHall = localStorage.getItem("hall")
+fullHall = JSON.parse(fullHall)
+let seanse = localStorage.getItem("seans")
+seanse = JSON.parse(seanse)
+let film = localStorage.getItem("film")
+film = JSON.parse(film)
+let timeInSeconds = localStorage.getItem("timestamp")
+
 let filmTit = document.getElementsByClassName("buying__info-title")
 filmTit[0].textContent = film.film_name
 let filmStart = document.getElementsByClassName("buying__info-start")
 filmStart[0].textContent =`Начало сеанса: ${seanse.seance_time}`
 let hallName = document.getElementsByClassName("buying__info-hall")
-hallName[0].textContent = hall.hall_name
+hallName[0].textContent = fullHall.hall_name
 let orPrice = document.getElementsByClassName("conf-step__legend-value price-standart")
-orPrice[0].textContent = hall.hall_price_standart
+orPrice[0].textContent = fullHall.hall_price_standart
 let vipPrice = document.getElementsByClassName("conf-step__legend-value price-vip")
-vipPrice[0].textContent = hall.hall_price_vip
+vipPrice[0].textContent = fullHall.hall_price_vip
 
-let time = new Date()
-let month = (time.getDate() <= day) ? (time.getMonth() +1) : ((time.getMonth() + 2) == 13 ? 1 : (time.getMonth() + 2))
-let year = ((time.getMonth() + 1) < month) ? time.getFullYear() : (time.getFullYear() + 1)
-time.setDate(day)
-time.setMonth(month)
-time.setFullYear(year)
-let sTime = seanse.seance_time.split(":")
-time.setHours(sTime[0], sTime[1], 0, 0)
-console.log(time)
-let startFilm = time.getTime()/1000
-let send = `event=get_hallConfig&timestamp=${startFilm}&hallId=${hall.hall_id}&seanceId=${seanse.seance_id}`
+let send = `event=get_hallConfig&timestamp=${timeInSeconds}&hallId=${fullHall.hall_id}&seanceId=${seanse.seance_id}`
 request(send).then( ans => {
     let cr = document.getElementsByClassName("conf-step__wrapper")
     if(ans != null) {
@@ -58,8 +47,8 @@ request(send).then( ans => {
             prevAns = ans
         }
     } else {
-        if(hall.hall_config == localStorage.getItem("conf")) {
-            cr[0].insertAdjacentHTML("afterbegin", hall.hall_config)
+        if(fullHall.hall_config == localStorage.getItem("conf")) {
+            cr[0].insertAdjacentHTML("afterbegin", fullHall.hall_config)
         } else {
             cr[0].insertAdjacentHTML("afterbegin", localStorage.getItem("conf"))
         }           
@@ -85,19 +74,19 @@ request(send).then( ans => {
                     let selSeat = (seatsInRow - ((seatsInRow * selRow) - numSelSeat) + 1)
                     seats[`seat${numSelSeat}`] = `${selRow}/${selSeat}`
                     if(s.classList.contains("conf-step__chair_standart")){
-                        price += parseInt(hall.hall_price_standart)
+                        price += parseInt(fullHall.hall_price_standart)
                     }
                     if(s.classList.contains("conf-step__chair_vip")){
-                        price += parseInt(hall.hall_price_vip)
+                        price += parseInt(fullHall.hall_price_vip)
                     }
                 } else {
                     s.classList.toggle("conf-step__chair_selected")
                     delete seats[`seat${numSelSeat}`]
                     if(s.classList.contains("conf-step__chair_standart")){
-                        price -= parseInt(hall.hall_price_standart)
+                        price -= parseInt(fullHall.hall_price_standart)
                     }
                     if(s.classList.contains("conf-step__chair_vip")){
-                        price -= parseInt(hall.hall_price_vip)
+                        price -= parseInt(fullHall.hall_price_vip)
                     }
                 }                    
             }
@@ -125,10 +114,10 @@ request(send).then( ans => {
     butt[0].addEventListener(`click`, () => {
         if(!butt[0].hasAttribute('disabled')) {
             localStorage.setItem("seats", JSON.stringify(seats))
-            localStorage.setItem("hallId", hall.hall_id)
+            localStorage.setItem("hallId", fullHall.hall_id)
             localStorage.setItem("seansId", seanse.seance_id)
-            localStorage.setItem("hallName", hall.hall_name)
-            localStorage.setItem("time", JSON.stringify(startFilm))
+            localStorage.setItem("hallName", fullHall.hall_name)
+            localStorage.setItem("time", JSON.stringify(timeInSeconds))
             localStorage.setItem("price", price)
             localStorage.setItem("conf", str)
             localStorage.setItem("filmName", film.film_name)
@@ -140,7 +129,7 @@ request(send).then( ans => {
     })
 })        
 
-let dubl = document.getElementsByClassName("conf-step")
+let dubl = document.querySelectorAll("body")
 let check = 0
 var tapedTwice = false
 dubl[0].addEventListener('touchstart', ()=> {
@@ -160,4 +149,3 @@ dubl[0].addEventListener('touchstart', ()=> {
         }
     }
  })
-

@@ -1,47 +1,31 @@
 localStorage.clear()
 let send = `event=update`
 let date = new Date()
-let midnight = Math.round(date.setHours(0, 0, 0, 0) / 1000)
-
-//навигация по дням
+let midnight = date.setHours(0, 0, 0, 0)
+let dayMs = date.setHours(0, 0, 0, 0)
+let oneDayMs = 86_400_000
+let dayWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"]
+let chooseDay
+let timeInS
 let nav = document.getElementsByClassName("page-nav")
 let nawLink = document.getElementsByClassName("page-nav__day")
-let numDayWeek = date.getDay()
-let today = date.getDate()
-let id = 0;
-let dayStor = today;
-for(let i = 0; i < 8; i++){
-    let dayWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"]
-    
-    nav[0].insertAdjacentHTML(`beforeend`, `<a id="day_${id}" class="page-nav__day" href="#">
-    <span class="page-nav__day-week">${dayWeek[numDayWeek]}</span><span class="page-nav__day-number">${today}</span>
-    </a>`)
 
-    let day = document.getElementById(`day_${id}`)
+//навигация по дням
+for(n of nawLink){
+    n.classList.remove("page-nav__day_chosen")
+    n.classList.remove("page-nav__day_weekend")
+}
+for(let i = 0; i < nawLink.length; i++){
+    let weekDayNum = new Date(dayMs).getDay()
+    let dayNum = new Date(dayMs).getDate()
+    nawLink[i].insertAdjacentHTML(`afterbegin` ,`<span class="page-nav__day-week">${dayWeek[weekDayNum]}</span><span class="page-nav__day-number">${dayNum}</span>`)
 
-    if(numDayWeek == 0 || numDayWeek == 6){
+    let day = nawLink[i]
+
+    if( weekDayNum == 0 || weekDayNum == 6){
         day.classList.add("page-nav__day_weekend")
     }
-
-    if(numDayWeek == 6){
-        numDayWeek = -1
-    }
-    numDayWeek++
-    
-    if([1, 3, 5, 7, 8, 10, 12].includes(parseInt(date.getMonth()))) {
-        today = today == 31 ? 1 : today + 1
-    } else if([4, 6, 9, 11].includes(parseInt(date.getMonth()))) {
-        today = today == 30 ? 1 : today + 1
-    } else if(date.getMonth == 2) {
-        //без исключений на каждый новый век
-        if(parseInt(date.getFullYear()) % 4){
-            today = 28 ? 1 : today + 1
-        }  else {
-            today = 29 ? 1 : today + 1
-        }
-    }
-
-    if(id === 0) {
+    if(i === 0) {
         day.classList.add("page-nav__day_today", "page-nav__day_chosen")
     }
 
@@ -50,10 +34,10 @@ for(let i = 0; i < 8; i++){
             n.classList.remove("page-nav__day_chosen")
         }
         day.classList.add("page-nav__day_chosen")
-        dayStor = day.children[1].textContent
-        console.log(dayStor)
+        //dayStor = day.children[1].textContent
+        chooseDay = dayMs
     })
-    id ++
+    dayMs += oneDayMs
 }
 
 //отрисовка фильмов
@@ -87,7 +71,7 @@ request(send).then( a => {
                         hall.insertAdjacentHTML(`beforeend`, `<li class="movie-seances__time-block"><a id="film_${h.hall_id}_${s.seance_id}_${f.film_id}" class="movie-seances__time" href="hall.html">${s.seance_time}</a></li>`)                     
                     }   
                 }
-                first = 1
+                //first = 1
             }
             
         }
@@ -95,10 +79,11 @@ request(send).then( a => {
         //listener для сеансов
         let link = document.getElementsByClassName("movie-seances__time")
         for (let i = 0; i < link.length; i++) {
-            link[i].addEventListener("click", ()=> {  
+            link[i].addEventListener("click", ()=> { 
                 
                 let info = link[i].id.split("_")
-                localStorage.setItem("day", dayStor)
+
+                //localStorage.setItem("day", dayStor)
                 a.halls.result.forEach(e => {
                     if(e.hall_id == info[1]){
                         localStorage.setItem("hall", JSON.stringify(e))
@@ -107,6 +92,8 @@ request(send).then( a => {
                 a.seances.result.forEach(e => {
                     if(e.seance_id == info[2]){
                         localStorage.setItem("seans", JSON.stringify(e))
+                        timeInS = chooseDay/1000 + (parseInt(e.seance_start) * 60)
+                        localStorage.setItem("timestamp", timeInS)
                     }
                 });
                 a.films.result.forEach(e => {
@@ -119,12 +106,10 @@ request(send).then( a => {
             
         }
 
-        //сегодня уже прошли
-        
+        //сегодня уже прошли        
         let navPan = document.getElementsByClassName("page-nav")
         let seanseLink = document.getElementsByClassName("movie-seances__time-block")
-
-        if(nawLink[0].classList.contains("page-nav__day_chosen")) {
+        if(nawLink[0].classList.contains("page-nav__day_today")) {
             setColor(seanseLink)
         }
         
@@ -163,7 +148,7 @@ function postermaker(f) {
 function setColor(seanseLink){
     for(i = 0; i < seanseLink.length; i++){
         let times = seanseLink[i].textContent.split(":")
-        let timeInSec = ((parseInt(times[0]) * 60 + parseInt(times[1])) * 60) + midnight
+        let timeInSec = ((parseInt(times[0]) * 60 + parseInt(times[1])) * 60) + Math.round((midnight/1000))
         let now = Math.round(new Date().getTime() / 1000)
         if(timeInSec <= now) {
             seanseLink[i].children[0].style.backgroundColor = 'grey'
