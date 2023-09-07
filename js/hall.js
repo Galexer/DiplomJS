@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 })
 
+
 let allSeats = document.getElementsByClassName("conf-step__row")
 let price = localStorage.getItem("price") != undefined ? parseInt(localStorage.getItem("price")) : 0
 let seats = localStorage.getItem("seats") != undefined ? JSON.parse(localStorage.getItem("seats")) : {}
@@ -47,7 +48,7 @@ request(send).then( ans => {
             prevAns = ans
         }
     } else {
-        if(fullHall.hall_config == localStorage.getItem("conf")) {
+        if(fullHall.hall_config == localStorage.getItem("conf") || localStorage.getItem("conf") == undefined) {
             cr[0].insertAdjacentHTML("afterbegin", fullHall.hall_config)
         } else {
             cr[0].insertAdjacentHTML("afterbegin", localStorage.getItem("conf"))
@@ -117,7 +118,7 @@ request(send).then( ans => {
             localStorage.setItem("hallId", fullHall.hall_id)
             localStorage.setItem("seansId", seanse.seance_id)
             localStorage.setItem("hallName", fullHall.hall_name)
-            localStorage.setItem("time", JSON.stringify(timeInSeconds))
+            localStorage.setItem("time", timeInSeconds)
             localStorage.setItem("price", price)
             localStorage.setItem("conf", str)
             localStorage.setItem("filmName", film.film_name)
