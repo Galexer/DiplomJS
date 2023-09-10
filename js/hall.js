@@ -130,7 +130,7 @@ request(send).then( ans => {
     })
 })        
 
-let dubl = document.querySelectorAll("body")
+let dubl = document.getElementsByClassName("conf-step")
 let check = 0
 var tapedTwice = false
 dubl[0].addEventListener('touchstart', ()=> {

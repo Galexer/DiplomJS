@@ -447,7 +447,7 @@ body {
 
  /*Diplom===========================================================*/
 
- @media screen and (max-width: 990px) {
+ @media screen and (max-width: 479px) {
   /* ~~~~~~~~~~~~ Главная ~~~~~~~~~~~~ */
   .movie .movie__info {
     gap: 10%;
@@ -482,8 +482,14 @@ body {
   }
   
   .conf-step {
-    display: block;
+    
+  }
+  
+  .conf-step__row{
+    display: flex;
+    flex-wrap: nowrap;
     margin: auto;
+    justify-content: center;
   }
   
 }
