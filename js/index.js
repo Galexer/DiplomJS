@@ -3,9 +3,9 @@ let send = `event=update`
 let date = new Date()
 let midnight = date.setHours(0, 0, 0, 0)
 let dayMs = date.setHours(0, 0, 0, 0)
+let chooseDay = date.setHours(0, 0, 0, 0)
 let oneDayMs = 86_400_000
 let dayWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"]
-let chooseDay = date.setHours(0, 0, 0, 0)
 let timeInS
 let nav = document.getElementsByClassName("page-nav")
 let nawLink = document.getElementsByClassName("page-nav__day")
