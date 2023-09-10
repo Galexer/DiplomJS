@@ -5,7 +5,7 @@ let midnight = date.setHours(0, 0, 0, 0)
 let dayMs = date.setHours(0, 0, 0, 0)
 let oneDayMs = 86_400_000
 let dayWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"]
-let chooseDay
+let chooseDay = date.setHours(0, 0, 0, 0)
 let timeInS
 let nav = document.getElementsByClassName("page-nav")
 let nawLink = document.getElementsByClassName("page-nav__day")
@@ -45,7 +45,6 @@ let main = document.getElementById("main")
 let seansNum = 0
 request(send).then( a => {
         let films = a.films.result
-        console.log(chooseDay)
         for(f of films){
             postermaker(f)
 
@@ -72,7 +71,6 @@ request(send).then( a => {
                         hall.insertAdjacentHTML(`beforeend`, `<li class="movie-seances__time-block"><a id="film_${h.hall_id}_${s.seance_id}_${f.film_id}" class="movie-seances__time" href="hall.html">${s.seance_time}</a></li>`)                     
                     }   
                 }
-                //first = 1
             }
             
         }
