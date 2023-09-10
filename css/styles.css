@@ -481,10 +481,6 @@ body {
     gap: 10%;
   }
   
-  .conf-step {
-    
-  }
-  
   .conf-step__row{
     display: flex;
     flex-wrap: nowrap;
